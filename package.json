@@ -1,0 +1,21 @@
+{
+  "name": "caching-proxy",
+  "version": "0.1",
+  "author": "Colin Mollenhour",
+  "description": "Caching reverse-proxy middleware for Connect",
+  "homepage": "https://github.com/colinmollenhour/node-caching-proxy",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/colinmollenhour/node-caching-proxy.git"
+  },
+  "keywords": ["connect","reverse","proxy","http","cache"],
+  "main": "./index.js",
+  "dependencies": {
+    "http-proxy": ">= 0.8.7",
+    "lodash": ">= 1.0.0",
+    "mongodb": ">= 1.2.8"
+  },
+  "engines": {
+    "node": ">= 0.6.6"
+  }
+}

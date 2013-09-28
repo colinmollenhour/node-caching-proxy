@@ -1,8 +1,9 @@
-# Node.js Caching HTTP Proxy #
+# Node.js Caching Reverse HTTP Proxy #
 
-This node.js project utilizes the "http-cache" module but adds an
-RFC2616-compliant cache atop it. It utilizes MongoDb as the default cache
-storage backend but could easily be extended with a different backend.
+cachingReverseProxy is a connect middleware which reverse-proxies requests to
+an upstream server with full support for RFC2616 protocol and then some.
+It utilizes MongoDb as the default cache storage backend but could easily be
+extended with other backends.
 
 The primary feature that sets this caching proxy apart from others is the
 full support for ETag, Vary and revalidate requests including simultaneous
@@ -11,10 +12,43 @@ select from them with If-None-Match (server-side content-negotiation).
 
 ## Status: ALPHA
 
-## Installation:
+## Example Application
 
-    $ npm install mongodb lodash http-proxy
-    $ git clone git://github.com/colinmollenhour/node-caching-proxy.git
+    var connect = require('connect');
+    var cachingProxy = require('caching-proxy');
+
+    var gatewayErrorApp = connect()
+      .use(connect.logger('errors'))
+      .use(function(req, res) { res.write("We'll be right back!"); });
+
+    var proxyApp = connect()
+      .use(connect.logger('dev'))
+      .use(cachingProxy.createProxy(
+        {
+          debug: false,
+          defaultExpiration: 3600,
+          defaultLifetime: 3600,
+          target: {host: 'app1.example.com', port: 80},
+        //  distribution: 'weighted',
+        //  upstreams: [
+        //    {host: app1.example.com, port: 80, weight: 5},
+        //    {host: app2.example.com, port: 80, weight: 2},
+        //    {host: app3.example.com, port: 80, backup: true},
+        //  ],
+        //  badGateway: gatewayErrorApp,
+        //  gatewayTimeout: gatewayErrorApp
+        },
+        cacheBackend: cachingProxy.backends.mongodb({
+            server: 'mongodb://127.0.0.1:27017/proxy_cache'
+        }
+      );
+
+    var mainApp = connect()
+      .use(connect.vhost('example.com', proxyApp))
+      .use(function(req, res){
+        res.end('Oops!');
+      })
+      .listen(3000);
 
 ## Special (Non-RFC) Features
 

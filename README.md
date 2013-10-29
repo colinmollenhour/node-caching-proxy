@@ -13,7 +13,7 @@ select from them with If-None-Match (server-side content-negotiation).
 ## Status: ALPHA
 
 ## Example Application
-
+``` js
     var connect = require('connect');
     var cachingProxy = require('caching-proxy');
 
@@ -49,7 +49,7 @@ select from them with If-None-Match (server-side content-negotiation).
         res.end('Oops!');
       })
       .listen(3000);
-
+```
 ## Special (Non-RFC) Features
 
 ### X-Accel-Expires ("off"|int)
